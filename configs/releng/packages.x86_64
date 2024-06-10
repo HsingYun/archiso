@@ -174,14 +174,16 @@ xf86-video-nouveau
 xf86-video-qxl
 xf86-video-vesa
 xf86-video-vmware
+file-roller
 cpio
 gzip
+lrzip
 p7zip
-unrar
 zstd
 xz
 zip
 tar
+unrar
 unzip
 unace
 traceroute
