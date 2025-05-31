@@ -1,0 +1,12 @@
+[Unit]
+Description=Custom Startup Script
+After=network.target
+Before=gdm.service
+
+[Service]
+Type=oneshot
+ExecStart=/root/.automated_script.sh
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target
