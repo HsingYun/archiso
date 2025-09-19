@@ -171,7 +171,6 @@ xf86-video-intel
 xf86-video-nouveau
 xf86-video-qxl
 xf86-video-vesa
-xf86-video-vmware
 file-roller
 cpio
 gzip
