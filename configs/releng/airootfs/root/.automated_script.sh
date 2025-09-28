@@ -1,44 +1,28 @@
 #!/usr/bin/env bash
-
-script_cmdline() {
-    local param
-    for param in $(</proc/cmdline); do
-        case "${param}" in
-            script=*)
-                echo "${param#*=}"
-                return 0
-                ;;
-        esac
-    done
-}
-
-automated_script() {
-    local script rt
-    script="$(script_cmdline)"
-    if [[ -n "${script}" && ! -x /tmp/startup_script ]]; then
-        if [[ "${script}" =~ ^((http|https|ftp|tftp)://) ]]; then
-            # there's no synchronization for network availability before executing this script
-            printf '%s: waiting for network-online.target\n' "$0"
-            until systemctl --quiet is-active network-online.target; do
-                sleep 1
-            done
-            printf '%s: downloading %s\n' "$0" "${script}"
-            curl "${script}" --location --retry-connrefused --retry 10 --fail -s -o /tmp/startup_script
-            rt=$?
-        else
-            cp "${script}" /tmp/startup_script
-            rt=$?
-        fi
-        if [[ ${rt} -eq 0 ]]; then
-            chmod +x /tmp/startup_script
-            printf '%s: executing automated script\n' "$0"
-            # note that script is executed when other services (like pacman-init) may be still in progress, please
-            # synchronize to "systemctl is-system-running --wait" when your script depends on other services
-            /tmp/startup_script
-        fi
+localedef -i en_US -f UTF-8 en_US.UTF-8
+localedef -i zh_CN -f UTF-8 zh_CN.UTF-8
+applications_dir="/usr/share/applications"
+hide_applications=(
+    "avahi-discover.desktop"
+    "bssh.desktop"
+    "bvnc.desktop"
+    "lftp.desktop"
+    "qv4l2.desktop"
+    "qvidcap.desktop"
+    "stoken-gui-small.desktop"
+    "stoken-gui.desktop"
+    "vim.desktop"
+    "org.gnome.Snapshot.desktop"
+)
+declare -A hide_applications_map
+for file in "${hide_applications[@]}"; do
+  hide_applications_map["$file"]=1
+done
+for file in "$applications_dir"/*; do
+  filename=$(basename "$file")
+  if [[ ${hide_applications_map["$filename"]} ]]; then
+    if [[ -e "$file" ]]; then
+      rm -f "$file"
     fi
-}
-
-if [[ $(tty) == "/dev/tty1" ]]; then
-    automated_script
-fi
+  fi
+done
