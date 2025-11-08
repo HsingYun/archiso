@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+if test -d /root/.autostart.d/; then
+    for custom_script in /root/.autostart.d/*.sh; do
+        echo "Executing $custom_script ..."
+        test -r "$custom_script" && . "$custom_script" || echo "Warning: Failed to execute $custom_script"
+    done
+    unset custom_script
+fi

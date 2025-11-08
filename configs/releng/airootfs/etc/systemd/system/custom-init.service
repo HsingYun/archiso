@@ -1,0 +1,12 @@
+[Unit]
+Description=Custom Startup Script
+Before=graphical.target
+
+[Service]
+Type=oneshot
+ExecStart=/root/.autostart
+TimeoutStartSec=infinity
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target
